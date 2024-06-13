@@ -70,9 +70,9 @@ String _source = """
 <body>
    <div id="cf-turnstile"></div>
    <script>
-      turnstile.ready(function () {
-         <TURNSTILE_READY>
-
+   
+      function renderWidgets(){
+        <TURNSTILE_READY>
          const widgetId = turnstile.render('#cf-turnstile', {
             sitekey: '<TURNSTILE_SITE_KEY>',
             action: '<TURNSTILE_ACTION>',
@@ -94,9 +94,25 @@ String _source = """
                <TURNSTILE_TOKEN_EXPIRED>
             }
          });
-         
          <TURNSTILE_CREATED>
-      });
+      };
+      
+      
+      function checkReadyToRender(){
+         turnstile.ready(function () {
+         if(window.flutter_inappwebview.callHandler){
+           renderWidgets();
+         }else{
+           setTimeout(() => {
+              checkReadyToRender();
+              }, 200);
+         }
+         });
+      };
+   
+   
+      checkReadyToRender();
+      
    </script>
    <style>
       * {
